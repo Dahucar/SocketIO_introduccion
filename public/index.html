@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniChat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        html, body { background-color: rgb(50, 4, 68); } 
+        .msgContent { padding: 5px; width: 100%; border-radius: 10px; margin: 6px 0px; } 
+        .send{ background-color: bisque;  display: flex; } 
+        .reseiver{ background-color: burlywood; } 
+        .message { text-align: justify; padding: 5px 3px; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" style="height: 100vh;">
+            <div class="card-header">
+                <h1>MiniChat - Socket.IO</h1>
+            </div>
+            <div class="card-body" style="background-color: rgba(127, 255, 212, 0.726); min-height: 60vh;">
+                <!-- Messages container -->
+            </div>
+            <div class="card-footer">
+                <form style="margin: 0px; padding: 0px;" id="myForm">
+                    <div class="row">
+                        <div class="col-10">
+                            <input type="text" id="txtMsg" class="form-control" placeholder="Insert your message" autocomplete="off"/>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-success w-100"> <b> > </b> </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+    <script>
+        // este socket permite ponerse en escucha de un evento
+        const socket = io('http://localhost:8000');
+        socket.on('wellcome-message', ( data ) => {
+            console.log('server response with.');
+            console.log( data );
+        }); 
+        
+        const myForm = document.querySelector('#myForm'); 
+        const txtMsg = document.querySelector('#txtMsg');
+        myForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let msgContent = txtMsg.value.trim();
+            if ( msgContent == '' ) 
+                return alert('Your message is empty!');
+            socket.emit('send-message',{ msgContent }); 
+            txtMsg.value = null;
+        });
+
+        socket.on('receiver-message', ( data ) => {
+            let { msgContent } = data;
+            console.log( data );
+            if( msgContent != '' ){
+                const cardBody = document.querySelector('.card-body');
+                const divContent = document.createElement('div');
+                const pMessage = document.createElement('p');
+                pMessage.className = 'message';
+                pMessage.innerHTML = msgContent;
+                divContent.className = 'msgContent reseiver';
+                divContent.appendChild( pMessage );
+                cardBody.appendChild( divContent );
+            }
+        }); 
+    </script>
+</body>
+</html>
