@@ -39,7 +39,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
     <script>
         // este socket permite ponerse en escucha de un evento
-        const socket = io('http://localhost:8000');
+        const socket = io('https://dahc-backend-socketio.herokuapp.com/');
         socket.on('wellcome-message', ( data ) => {
             console.log('server response with.');
             console.log( data );
